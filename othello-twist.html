@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Othello Twist - เกมที่ไม่เหมือนใคร</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -19,22 +20,21 @@
             --neon-yellow: #ffff00;
             --dark-bg: #0a0a1a;
             --darker-bg: #050510;
-            --board-dark: #1a472a;
-            --board-light: #2d5a3d;
         }
 
-        body {
+        html, body {
             font-family: 'Kanit', sans-serif;
             background: var(--dark-bg);
             min-height: 100vh;
+            min-height: 100dvh;
             overflow-x: hidden;
+            touch-action: manipulation;
         }
 
         .font-orbitron {
             font-family: 'Orbitron', monospace;
         }
 
-        /* Animated Background */
         .animated-bg {
             position: fixed;
             top: 0;
@@ -45,7 +45,6 @@
             background: 
                 radial-gradient(ellipse at 20% 80%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(255, 255, 0, 0.05) 0%, transparent 50%),
                 var(--darker-bg);
         }
 
@@ -60,48 +59,32 @@
                 linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
         }
 
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        /* Neon Text Effects */
         .neon-text {
-            text-shadow: 
-                0 0 5px var(--neon-cyan),
-                0 0 10px var(--neon-cyan),
-                0 0 20px var(--neon-cyan),
-                0 0 40px var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
         }
 
         .neon-text-magenta {
-            text-shadow: 
-                0 0 5px var(--neon-magenta),
-                0 0 10px var(--neon-magenta),
-                0 0 20px var(--neon-magenta);
+            text-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta);
         }
 
-        /* Game Board */
         .game-board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             gap: 2px;
-            padding: 8px;
+            padding: 6px;
             background: linear-gradient(135deg, #0d3320 0%, #1a472a 50%, #0d3320 100%);
             border-radius: 12px;
-            box-shadow: 
-                0 0 30px rgba(0, 245, 255, 0.3),
-                inset 0 0 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.3), inset 0 0 60px rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(0, 245, 255, 0.3);
+            aspect-ratio: 1;
         }
 
         .cell {
             aspect-ratio: 1;
             background: linear-gradient(135deg, #2d5a3d 0%, #1a472a 100%);
-            border-radius: 4px;
+            border-radius: 3px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -111,9 +94,8 @@
             overflow: hidden;
         }
 
-        .cell:hover:not(.has-disc) {
+        .cell:active:not(.has-disc) {
             background: linear-gradient(135deg, #3d7a5d 0%, #2a5a3a 100%);
-            box-shadow: inset 0 0 20px rgba(0, 245, 255, 0.2);
         }
 
         .cell.valid-move::after {
@@ -121,7 +103,7 @@
             position: absolute;
             width: 30%;
             height: 30%;
-            background: rgba(0, 245, 255, 0.5);
+            background: rgba(0, 245, 255, 0.6);
             border-radius: 50%;
             animation: pulse 1.5s ease-in-out infinite;
         }
@@ -131,13 +113,9 @@
             animation: blackHolePulse 2s ease-in-out infinite;
         }
 
-        .cell.frozen {
-            background: linear-gradient(135deg, #4a9eff 0%, #2d5a8d 100%);
-        }
-
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.3); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 0.9; }
         }
 
         @keyframes blackHolePulse {
@@ -145,7 +123,6 @@
             50% { box-shadow: inset 0 0 40px #ff00ff; }
         }
 
-        /* Discs */
         .disc {
             width: 80%;
             height: 80%;
@@ -156,59 +133,26 @@
 
         .disc-black {
             background: linear-gradient(145deg, #2a2a2a 0%, #0a0a0a 100%);
-            box-shadow: 
-                inset 3px 3px 6px rgba(255, 255, 255, 0.1),
-                inset -3px -3px 6px rgba(0, 0, 0, 0.8),
-                0 4px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 3px 3px 6px rgba(255, 255, 255, 0.1), inset -3px -3px 6px rgba(0, 0, 0, 0.8), 0 4px 8px rgba(0, 0, 0, 0.5);
         }
 
         .disc-white {
             background: linear-gradient(145deg, #ffffff 0%, #d0d0d0 100%);
-            box-shadow: 
-                inset 3px 3px 6px rgba(255, 255, 255, 0.8),
-                inset -3px -3px 6px rgba(0, 0, 0, 0.2),
-                0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 3px 3px 6px rgba(255, 255, 255, 0.8), inset -3px -3px 6px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .disc-gold {
-            background: linear-gradient(145deg, #ffd700 0%, #b8860b 100%);
-            box-shadow: 
-                0 0 15px rgba(255, 215, 0, 0.6),
-                inset 2px 2px 4px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(145deg, #ffd700 0%, #b8860b 100%) !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6), inset 2px 2px 4px rgba(255, 255, 255, 0.5) !important;
             animation: goldGlow 2s ease-in-out infinite;
-        }
-
-        .disc-diamond {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 230, 255, 0.8) 100%);
-            box-shadow: 
-                0 0 20px rgba(0, 245, 255, 0.8),
-                inset 0 0 10px rgba(255, 255, 255, 0.9);
-            animation: diamondSparkle 1.5s ease-in-out infinite;
-        }
-
-        .disc-fire {
-            background: linear-gradient(145deg, #ff4500 0%, #8b0000 100%);
-            box-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
-            animation: fireGlow 0.5s ease-in-out infinite alternate;
-        }
-
-        .disc-ice {
-            background: linear-gradient(145deg, #87ceeb 0%, #4169e1 100%);
-            box-shadow: 0 0 15px rgba(135, 206, 235, 0.6);
-        }
-
-        .disc-poison {
-            background: linear-gradient(145deg, #9932cc 0%, #4b0082 100%);
-            box-shadow: 0 0 15px rgba(153, 50, 204, 0.6);
-            animation: poisonPulse 1s ease-in-out infinite;
         }
 
         .disc-shielded::after {
             content: '🛡️';
             position: absolute;
-            font-size: 0.6em;
-            top: -5px;
-            right: -5px;
+            font-size: 0.5em;
+            top: -2px;
+            right: -2px;
         }
 
         @keyframes goldGlow {
@@ -216,106 +160,67 @@
             50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.9); }
         }
 
-        @keyframes diamondSparkle {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.3); }
-        }
-
-        @keyframes fireGlow {
-            0% { box-shadow: 0 0 15px rgba(255, 69, 0, 0.6); }
-            100% { box-shadow: 0 0 25px rgba(255, 165, 0, 0.9); }
-        }
-
-        @keyframes poisonPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Flip Animation */
-        .flipping {
-            animation: flipDisc 0.5s ease-in-out;
-        }
-
-        @keyframes flipDisc {
-            0% { transform: rotateY(0deg); }
-            50% { transform: rotateY(90deg) scale(0.8); }
-            100% { transform: rotateY(180deg); }
-        }
-
-        /* Power-up on board */
         .power-up-cell {
             position: absolute;
-            font-size: 1.5em;
+            font-size: 1.2em;
             animation: powerUpFloat 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
+            filter: drop-shadow(0 0 8px rgba(255, 255, 0, 0.8));
         }
 
         @keyframes powerUpFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            50% { transform: translateY(-3px); }
         }
 
-        /* Power-up inventory */
         .power-up-slot {
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(0, 245, 255, 0.3);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5em;
+            font-size: 1.3em;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .power-up-slot:hover {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
-            transform: scale(1.1);
-        }
-
-        .power-up-slot.selected {
+        .power-up-slot:active, .power-up-slot.selected {
             border-color: var(--neon-magenta);
             box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
-            animation: selectedPulse 1s ease-in-out infinite;
+            transform: scale(1.05);
         }
 
-        @keyframes selectedPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Buttons */
         .btn-neon {
-            padding: 12px 24px;
+            padding: 10px 20px;
             background: transparent;
             border: 2px solid var(--neon-cyan);
             color: var(--neon-cyan);
             font-family: 'Orbitron', monospace;
             font-weight: 700;
+            font-size: 0.75rem;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
-        .btn-neon:hover {
+        .btn-neon:active {
             background: var(--neon-cyan);
             color: var(--dark-bg);
-            box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
         }
 
         .btn-mode {
-            padding: 8px 16px;
+            padding: 8px 14px;
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: rgba(255, 255, 255, 0.7);
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 0.8rem;
         }
 
         .btn-mode.active {
@@ -324,7 +229,17 @@
             color: var(--neon-cyan);
         }
 
-        /* Event Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+
         .event-popup {
             position: fixed;
             top: 50%;
@@ -333,11 +248,45 @@
             background: radial-gradient(ellipse at center, rgba(20, 0, 40, 0.98) 0%, rgba(10, 0, 20, 0.98) 100%);
             border: 3px solid var(--neon-magenta);
             border-radius: 20px;
-            padding: 40px;
+            padding: 25px 35px;
             text-align: center;
             z-index: 1000;
-            animation: popupAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: popupAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: 0 0 60px rgba(255, 0, 255, 0.5);
+            max-width: 85vw;
+        }
+
+        .pass-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid var(--neon-yellow);
+            border-radius: 15px;
+            padding: 20px 35px;
+            text-align: center;
+            z-index: 1000;
+            animation: popupAppear 0.3s ease-out;
+            box-shadow: 0 0 40px rgba(255, 255, 0, 0.3);
+        }
+
+        .info-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            z-index: 1000;
+            animation: popupAppear 0.3s ease-out;
+            box-shadow: 0 0 40px rgba(0, 245, 255, 0.3);
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         @keyframes popupAppear {
@@ -346,8 +295,8 @@
         }
 
         .event-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
+            font-size: 3.5em;
+            margin-bottom: 10px;
             animation: eventIconBounce 0.5s ease-in-out infinite alternate;
         }
 
@@ -356,106 +305,85 @@
             100% { transform: scale(1.1); }
         }
 
-        /* Combo notification */
-        .combo-popup {
+        .toast {
             position: fixed;
-            top: 20%;
+            top: 12%;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.9) 0%, rgba(255, 165, 0, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.95) 0%, rgba(255, 165, 0, 0.95) 100%);
             color: #000;
-            padding: 15px 40px;
-            border-radius: 30px;
+            padding: 10px 25px;
+            border-radius: 25px;
             font-family: 'Orbitron', monospace;
             font-weight: 900;
-            font-size: 1.5em;
+            font-size: 0.9em;
             z-index: 1000;
-            animation: comboSlide 2s ease-out forwards;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            animation: toastSlide 2.5s ease-out forwards;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+            white-space: nowrap;
+            max-width: 90vw;
+            text-align: center;
         }
 
-        @keyframes comboSlide {
-            0% { transform: translateX(-50%) translateY(-50px); opacity: 0; }
-            20% { transform: translateX(-50%) translateY(0); opacity: 1; }
-            80% { transform: translateX(-50%) translateY(0); opacity: 1; }
-            100% { transform: translateX(-50%) translateY(-50px); opacity: 0; }
+        .toast.info {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.95) 0%, rgba(0, 150, 200, 0.95) 100%);
         }
 
-        /* Score display */
+        .toast.power {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.95) 0%, rgba(150, 0, 200, 0.95) 100%);
+            color: #fff;
+        }
+
+        @keyframes toastSlide {
+            0% { transform: translateX(-50%) translateY(-30px); opacity: 0; }
+            15% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            85% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(-30px); opacity: 0; }
+        }
+
         .score-card {
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 15px 25px;
+            border-radius: 12px;
+            padding: 6px 12px;
             backdrop-filter: blur(10px);
         }
 
         .score-value {
             font-family: 'Orbitron', monospace;
-            font-size: 2.5em;
+            font-size: 1.6em;
             font-weight: 900;
         }
 
-        /* Tutorial tooltip */
-        .tutorial-tip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--neon-yellow);
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 0.9em;
-            max-width: 200px;
-            z-index: 100;
-            animation: tipPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes tipPulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 0, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(255, 255, 0, 0.6); }
-        }
-
-        /* Shake animation */
-        .screen-shake {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
-        /* Turn indicator */
         .turn-indicator {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 20px;
+            gap: 6px;
+            padding: 6px 14px;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 30px;
+            border-radius: 20px;
             border: 2px solid;
+            font-size: 0.8rem;
         }
 
         .turn-indicator.player-turn {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
         }
 
         .turn-indicator.ai-turn {
             border-color: var(--neon-magenta);
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
         }
 
-        /* Thinking animation */
         .ai-thinking {
             display: flex;
-            gap: 5px;
+            gap: 4px;
         }
 
         .ai-thinking span {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: var(--neon-magenta);
             border-radius: 50%;
             animation: thinking 1.4s ease-in-out infinite;
@@ -469,53 +397,39 @@
             50% { transform: scale(1.5); opacity: 1; }
         }
 
-        /* Particle effects */
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            animation: particleFade 1s ease-out forwards;
+        .screen-shake {
+            animation: shake 0.5s ease-in-out;
         }
 
-        @keyframes particleFade {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0) translateY(-50px); }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
         }
 
-        /* Overlay */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 999;
-            backdrop-filter: blur(5px);
-        }
-
-        /* Result screen */
         .result-screen {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, rgba(10, 10, 30, 0.98) 0%, rgba(5, 5, 15, 0.98) 100%);
-            border-radius: 30px;
-            padding: 50px;
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
             z-index: 1001;
-            min-width: 400px;
-            animation: resultAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            width: 88%;
+            max-width: 360px;
+            animation: resultAppear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         .result-screen.victory {
             border: 3px solid var(--neon-cyan);
-            box-shadow: 0 0 80px rgba(0, 245, 255, 0.5);
+            box-shadow: 0 0 60px rgba(0, 245, 255, 0.5);
         }
 
         .result-screen.defeat {
             border: 3px solid var(--neon-magenta);
-            box-shadow: 0 0 80px rgba(255, 0, 255, 0.5);
+            box-shadow: 0 0 60px rgba(255, 0, 255, 0.5);
         }
 
         @keyframes resultAppear {
@@ -523,29 +437,39 @@
             100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
         }
 
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-            .game-board {
-                width: 95vw;
-                max-width: 400px;
-            }
-
-            .score-value {
-                font-size: 1.8em;
-            }
-
-            .power-up-slot {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2em;
-            }
+        .help-btn {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            cursor: pointer;
+            z-index: 100;
         }
+
+        @media (max-width: 400px) {
+            .game-board { gap: 1px; padding: 4px; }
+            .score-value { font-size: 1.4em; }
+            .power-up-slot { width: 38px; height: 38px; font-size: 1.1em; }
+            .btn-neon { padding: 8px 14px; font-size: 0.65rem; }
+            .power-up-cell { font-size: 1em; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
     </style>
 </head>
 <body>
     <div class="animated-bg"></div>
     <div class="grid-overlay"></div>
-
     <div id="app"></div>
 
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -555,90 +479,77 @@
     <script type="text/babel">
         const { useState, useEffect, useCallback, useRef } = React;
 
-        // Constants
         const BOARD_SIZE = 8;
-        const DIRECTIONS = [
-            [-1, -1], [-1, 0], [-1, 1],
-            [0, -1],           [0, 1],
-            [1, -1],  [1, 0],  [1, 1]
-        ];
+        const DIRECTIONS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
 
         const POWER_UPS = {
-            BOMB: { icon: '💣', name: 'Bomb', desc: 'ระเบิดหมาก 3×3' },
-            SWAP: { icon: '🔄', name: 'Swap', desc: 'สลับสีหมากทั้งกระดาน' },
-            SHIELD: { icon: '🛡️', name: 'Shield', desc: 'ป้องกันหมาก 1 ตัว' },
-            DOUBLE: { icon: '⚡', name: 'Double Turn', desc: 'เดินได้ 2 ครั้ง' },
-            GHOST: { icon: '👻', name: 'Ghost', desc: 'วางหมากที่ไหนก็ได้' },
-            SNIPER: { icon: '🎯', name: 'Sniper', desc: 'พลิกหมากศัตรู 1 ตัว' }
+            BOMB: { icon: '💣', name: 'Bomb', desc: 'ระเบิดหมาก 3×3 รอบตำแหน่งที่เลือก' },
+            SWAP: { icon: '🔄', name: 'Swap', desc: 'สลับสีหมากทั้งกระดาน ดำ↔ขาว' },
+            SHIELD: { icon: '🛡️', name: 'Shield', desc: 'ป้องกันหมากของคุณ 1 ตัว ไม่ให้ถูกพลิก 3 ตา' },
+            DOUBLE: { icon: '⚡', name: 'Double', desc: 'เดินได้ 2 ครั้งติดต่อกัน' },
+            GHOST: { icon: '👻', name: 'Ghost', desc: 'วางหมากที่ไหนก็ได้ 1 ครั้ง โดยไม่ต้องขนาบ' },
+            SNIPER: { icon: '🎯', name: 'Sniper', desc: 'พลิกหมากศัตรูตัวไหนก็ได้ 1 ตัว' }
         };
 
         const EVENTS = {
-            EARTHQUAKE: { icon: '🌊', name: 'Earthquake', desc: 'หมากทั้งหมดเลื่อน!' },
-            BLACKHOLE: { icon: '🕳️', name: 'Black Hole', desc: 'เกิดหลุมดำ 4 ช่อง!' },
-            RAINBOW: { icon: '🌈', name: 'Rainbow', desc: 'หมาก 5 ตัวกลายเป็นทอง!' },
-            TIMEWARP: { icon: '⏰', name: 'Time Warp', desc: 'ย้อนเวลา 3 ตา!' },
-            MIRROR: { icon: '🎭', name: 'Mirror', desc: 'กระดานสะท้อน!' },
-            CHAOS: { icon: '🌪️', name: 'Chaos', desc: 'หมาก 6 ตัวสลับที่!' }
+            EARTHQUAKE: { icon: '🌊', name: 'Earthquake', desc: 'หมากทั้งหมดเลื่อนไปทิศทางสุ่ม!' },
+            BLACKHOLE: { icon: '🕳️', name: 'Black Hole', desc: 'เกิดหลุมดำ 4 ช่อง วางหมากไม่ได้!' },
+            RAINBOW: { icon: '🌈', name: 'Rainbow', desc: 'หมากสุ่ม 5 ตัวกลายเป็นหมากทอง (2 คะแนน)!' },
+            TIMEWARP: { icon: '⏰', name: 'Time Warp', desc: 'ย้อนเวลากลับไป 3 ตา!' },
+            MIRROR: { icon: '🎭', name: 'Mirror', desc: 'กระดานสะท้อนแนวนอน!' },
+            CHAOS: { icon: '🌪️', name: 'Chaos', desc: 'หมากสุ่ม 6 ตัวสลับตำแหน่งกัน!' }
         };
 
-        const DISC_TYPES = {
-            NORMAL: 'normal',
-            GOLD: 'gold',
-            DIAMOND: 'diamond',
-            FIRE: 'fire',
-            ICE: 'ice',
-            POISON: 'poison'
+        const DISC_INFO = {
+            gold: { icon: '🥇', name: 'หมากทอง', desc: 'นับ 2 คะแนนแทน 1' }
         };
 
-        // Sound effects (using Web Audio API)
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
         const playSound = (type) => {
-            if (!audioCtx) audioCtx = new AudioContext();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            const sounds = {
-                place: { freq: 440, duration: 0.1, type: 'sine' },
-                flip: { freq: 660, duration: 0.15, type: 'sine' },
-                powerup: { freq: 880, duration: 0.3, type: 'square' },
-                combo: { freq: 1000, duration: 0.5, type: 'sawtooth' },
-                event: { freq: 220, duration: 0.8, type: 'triangle' },
-                victory: { freq: 523, duration: 1, type: 'sine' },
-                defeat: { freq: 196, duration: 1, type: 'sine' }
-            };
-
-            const sound = sounds[type] || sounds.place;
-            oscillator.type = sound.type;
-            oscillator.frequency.setValueAtTime(sound.freq, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + sound.duration);
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + sound.duration);
+            try {
+                if (!audioCtx) audioCtx = new AudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const sounds = {
+                    place: { freq: 440, dur: 0.1, type: 'sine' },
+                    flip: { freq: 660, dur: 0.15, type: 'sine' },
+                    powerup: { freq: 880, dur: 0.3, type: 'square' },
+                    combo: { freq: 1000, dur: 0.4, type: 'sawtooth' },
+                    event: { freq: 220, dur: 0.6, type: 'triangle' },
+                    victory: { freq: 523, dur: 0.8, type: 'sine' },
+                    defeat: { freq: 196, dur: 0.8, type: 'sine' },
+                    pass: { freq: 300, dur: 0.3, type: 'triangle' }
+                };
+                const s = sounds[type] || sounds.place;
+                osc.type = s.type;
+                osc.frequency.setValueAtTime(s.freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + s.dur);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + s.dur);
+            } catch (e) {}
         };
 
-        // Main Game Component
         function OthelloTwist() {
-            // Game state
-            const [board, setBoard] = useState(() => initializeBoard());
+            const [board, setBoard] = useState(() => initBoard());
             const [currentPlayer, setCurrentPlayer] = useState('black');
-            const [gameMode, setGameMode] = useState('chaos'); // classic, chaos, strategy, speedrun
-            const [difficulty, setDifficulty] = useState('medium'); // easy, medium, hard
-            const [gameState, setGameState] = useState('menu'); // menu, playing, ended
+            const [gameMode, setGameMode] = useState('chaos');
+            const [difficulty, setDifficulty] = useState('medium');
+            const [gameState, setGameState] = useState('menu');
             const [scores, setScores] = useState({ black: 2, white: 2 });
             const [powerUps, setPowerUps] = useState([]);
             const [selectedPowerUp, setSelectedPowerUp] = useState(null);
             const [boardPowerUps, setBoardPowerUps] = useState({});
             const [blackHoles, setBlackHoles] = useState([]);
-            const [frozenCells, setFrozenCells] = useState({});
             const [shieldedDiscs, setShieldedDiscs] = useState([]);
             const [turnCount, setTurnCount] = useState(0);
-            const [nextEventIn, setNextEventIn] = useState(Math.floor(Math.random() * 4) + 5);
+            const [nextEventIn, setNextEventIn] = useState(5);
             const [currentEvent, setCurrentEvent] = useState(null);
-            const [combo, setCombo] = useState(null);
+            const [toast, setToast] = useState(null);
             const [isAIThinking, setIsAIThinking] = useState(false);
             const [doubleTurnActive, setDoubleTurnActive] = useState(false);
             const [ghostModeActive, setGhostModeActive] = useState(false);
@@ -647,74 +558,98 @@
             const [screenShake, setScreenShake] = useState(false);
             const [result, setResult] = useState(null);
             const [stats, setStats] = useState({ combos: 0, powerUpsUsed: 0, eventsLived: 0 });
+            const [passNotification, setPassNotification] = useState(null);
+            const [showHelp, setShowHelp] = useState(false);
+            const [seenItems, setSeenItems] = useState(new Set());
 
-            const boardRef = useRef(null);
-
-            // Initialize board
-            function initializeBoard() {
-                const newBoard = Array(BOARD_SIZE).fill(null).map(() => 
-                    Array(BOARD_SIZE).fill(null).map(() => ({ player: null, type: DISC_TYPES.NORMAL }))
-                );
-                // Initial setup
-                newBoard[3][3] = { player: 'white', type: DISC_TYPES.NORMAL };
-                newBoard[3][4] = { player: 'black', type: DISC_TYPES.NORMAL };
-                newBoard[4][3] = { player: 'black', type: DISC_TYPES.NORMAL };
-                newBoard[4][4] = { player: 'white', type: DISC_TYPES.NORMAL };
-                return newBoard;
+            function initBoard() {
+                const b = Array(8).fill(null).map(() => Array(8).fill(null).map(() => ({ player: null, type: 'normal' })));
+                b[3][3] = { player: 'white', type: 'normal' };
+                b[3][4] = { player: 'black', type: 'normal' };
+                b[4][3] = { player: 'black', type: 'normal' };
+                b[4][4] = { player: 'white', type: 'normal' };
+                return b;
             }
 
-            // Get valid moves
-            const getValidMoves = useCallback((board, player, ghost = false) => {
+            const getValidMoves = useCallback((brd, player, ghost = false) => {
                 const moves = [];
-                for (let row = 0; row < BOARD_SIZE; row++) {
-                    for (let col = 0; col < BOARD_SIZE; col++) {
-                        if (board[row][col].player) continue;
-                        if (blackHoles.some(bh => bh.row === row && bh.col === col)) continue;
-                        if (frozenCells[`${row}-${col}`]) continue;
-
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        if (brd[r][c].player) continue;
+                        if (blackHoles.some(h => h.row === r && h.col === c)) continue;
                         if (ghost) {
-                            moves.push({ row, col, flips: [] });
+                            moves.push({ row: r, col: c, flips: [] });
                         } else {
-                            const flips = getFlips(board, row, col, player);
-                            if (flips.length > 0) {
-                                moves.push({ row, col, flips });
-                            }
+                            const flips = getFlips(brd, r, c, player);
+                            if (flips.length > 0) moves.push({ row: r, col: c, flips });
                         }
                     }
                 }
                 return moves;
-            }, [blackHoles, frozenCells]);
+            }, [blackHoles]);
 
-            // Get flips for a move
-            function getFlips(board, row, col, player) {
-                const opponent = player === 'black' ? 'white' : 'black';
+            function getFlips(brd, row, col, player) {
+                const opp = player === 'black' ? 'white' : 'black';
                 const allFlips = [];
-
                 for (const [dr, dc] of DIRECTIONS) {
                     const flips = [];
-                    let r = row + dr;
-                    let c = col + dc;
-
-                    while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE) {
-                        const cell = board[r][c];
+                    let r = row + dr, c = col + dc;
+                    while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                        const cell = brd[r][c];
                         if (!cell.player) break;
-                        if (cell.player === opponent) {
-                            flips.push({ row: r, col: c });
-                        } else {
-                            if (flips.length > 0) {
-                                allFlips.push(...flips);
-                            }
-                            break;
-                        }
-                        r += dr;
-                        c += dc;
+                        if (cell.player === opp) flips.push({ row: r, col: c });
+                        else { if (flips.length > 0) allFlips.push(...flips); break; }
+                        r += dr; c += dc;
                     }
                 }
-
                 return allFlips;
             }
 
-            // Make a move
+            function updateScores(brd) {
+                let black = 0, white = 0;
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const cell = brd[r][c];
+                        if (cell.player === 'black') black += cell.type === 'gold' ? 2 : 1;
+                        else if (cell.player === 'white') white += cell.type === 'gold' ? 2 : 1;
+                    }
+                }
+                setScores({ black, white });
+                return { black, white };
+            }
+
+            const showToast = (msg, type = 'default') => {
+                setToast({ msg, type });
+                setTimeout(() => setToast(null), 2500);
+            };
+
+            const handleTurnEnd = useCallback((newBoard, justPlayed) => {
+                const nextP = justPlayed === 'black' ? 'white' : 'black';
+                const nextMoves = getValidMoves(newBoard, nextP);
+                const currentMoves = getValidMoves(newBoard, justPlayed);
+
+                // Decrease shields
+                setShieldedDiscs(sd => sd.filter(s => s.turns > 1).map(s => ({ ...s, turns: s.turns - 1 })));
+
+                if (nextMoves.length === 0 && currentMoves.length === 0) {
+                    setTimeout(() => endGame(newBoard), 300);
+                    return;
+                }
+
+                if (nextMoves.length === 0) {
+                    const passPlayer = nextP === 'black' ? 'คุณ' : 'AI';
+                    setPassNotification({ player: passPlayer });
+                    playSound('pass');
+                    setTimeout(() => {
+                        setPassNotification(null);
+                        // ไม่สลับตา - ผู้เล่นปัจจุบันเล่นต่อ
+                    }, 1500);
+                    return;
+                }
+
+                setCurrentPlayer(nextP);
+            }, [getValidMoves]);
+
             const makeMove = useCallback((row, col, isAI = false) => {
                 if (gameState !== 'playing') return;
                 if (!isAI && currentPlayer === 'white') return;
@@ -723,7 +658,7 @@
                 const player = currentPlayer;
                 const newBoard = board.map(r => r.map(c => ({ ...c })));
 
-                // Check for sniper mode
+                // Sniper mode
                 if (sniperModeActive && !isAI) {
                     if (newBoard[row][col].player === 'white') {
                         newBoard[row][col].player = 'black';
@@ -732,317 +667,211 @@
                         playSound('flip');
                         updateScores(newBoard);
                         setStats(s => ({ ...s, powerUpsUsed: s.powerUpsUsed + 1 }));
-                        switchTurn();
+                        handleTurnEnd(newBoard, player);
                         return;
                     }
                     return;
                 }
 
-                // Ghost mode - can place anywhere
                 const validMoves = getValidMoves(board, player, ghostModeActive);
                 const move = validMoves.find(m => m.row === row && m.col === col);
-
                 if (!move && !ghostModeActive) return;
 
-                // Save history for time warp
                 setGameHistory(h => [...h.slice(-10), { board: JSON.parse(JSON.stringify(board)), scores: { ...scores } }]);
 
-                // Place disc
-                newBoard[row][col] = { player, type: DISC_TYPES.NORMAL };
+                newBoard[row][col] = { player, type: 'normal' };
                 playSound('place');
 
-                // Apply flips (not in ghost mode for empty cells)
                 const flips = ghostModeActive ? getFlips(board, row, col, player) : move.flips;
                 flips.forEach(flip => {
                     if (!shieldedDiscs.some(s => s.row === flip.row && s.col === flip.col)) {
-                        // Check for poison disc
-                        if (newBoard[flip.row][flip.col].type === DISC_TYPES.POISON) {
-                            // Poison effect - flip 2 of the flipper's discs
-                            let flipped = 0;
-                            for (let r = 0; r < BOARD_SIZE && flipped < 2; r++) {
-                                for (let c = 0; c < BOARD_SIZE && flipped < 2; c++) {
-                                    if (newBoard[r][c].player === player && !(r === row && c === col)) {
-                                        newBoard[r][c].player = player === 'black' ? 'white' : 'black';
-                                        flipped++;
-                                    }
-                                }
-                            }
-                        }
                         newBoard[flip.row][flip.col].player = player;
                     }
                 });
 
-                // Check for power-up pickup
-                const powerUpKey = `${row}-${col}`;
-                if (boardPowerUps[powerUpKey] && powerUps.length < 3) {
-                    setPowerUps(p => [...p, boardPowerUps[powerUpKey]]);
-                    setBoardPowerUps(bp => {
-                        const newBp = { ...bp };
-                        delete newBp[powerUpKey];
-                        return newBp;
-                    });
+                // Power-up pickup
+                const key = `${row}-${col}`;
+                if (boardPowerUps[key] && powerUps.length < 3 && !isAI) {
+                    const picked = boardPowerUps[key];
+                    setPowerUps(p => [...p, picked]);
+                    setBoardPowerUps(bp => { const n = { ...bp }; delete n[key]; return n; });
                     playSound('powerup');
-                }
-
-                if (ghostModeActive) {
-                    setGhostModeActive(false);
-                }
-
-                // Fire disc effect
-                for (let r = 0; r < BOARD_SIZE; r++) {
-                    for (let c = 0; c < BOARD_SIZE; c++) {
-                        if (newBoard[r][c].type === DISC_TYPES.FIRE && newBoard[r][c].player) {
-                            const firePlayer = newBoard[r][c].player;
-                            DIRECTIONS.forEach(([dr, dc]) => {
-                                const nr = r + dr;
-                                const nc = c + dc;
-                                if (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE) {
-                                    if (newBoard[nr][nc].player && newBoard[nr][nc].player !== firePlayer) {
-                                        if (!shieldedDiscs.some(s => s.row === nr && s.col === nc)) {
-                                            newBoard[nr][nc].player = firePlayer;
-                                        }
-                                    }
-                                }
-                            });
-                        }
+                    if (!seenItems.has('power_' + picked)) {
+                        setSeenItems(s => new Set([...s, 'power_' + picked]));
+                        showToast(`${POWER_UPS[picked].icon} ${POWER_UPS[picked].name}: ${POWER_UPS[picked].desc}`, 'power');
                     }
                 }
+
+                if (ghostModeActive) setGhostModeActive(false);
 
                 setBoard(newBoard);
                 updateScores(newBoard);
 
-                // Check for combos
-                checkCombos(flips.length, row, col, newBoard, player);
-
-                // Spawn power-ups on board (chaos mode)
-                if (gameMode === 'chaos' && Math.random() < 0.15) {
-                    spawnPowerUp();
+                // Combos
+                if (flips.length >= 8) {
+                    showToast('🔥 TRIPLE FLIP! +1 Power-Up', 'default');
+                    if (powerUps.length < 3 && player === 'black') {
+                        const types = Object.keys(POWER_UPS);
+                        setPowerUps(p => [...p, types[Math.floor(Math.random() * types.length)]]);
+                    }
+                    setStats(s => ({ ...s, combos: s.combos + 1 }));
+                    playSound('combo');
                 }
 
-                // Update turn count and check for events
-                const newTurnCount = turnCount + 1;
-                setTurnCount(newTurnCount);
-
-                if (gameMode === 'chaos' && newTurnCount >= nextEventIn) {
-                    triggerRandomEvent();
-                    setNextEventIn(newTurnCount + Math.floor(Math.random() * 4) + 5);
+                if ((row === 0 || row === 7) && (col === 0 || col === 7)) {
+                    newBoard[row][col].type = 'gold';
+                    showToast('🏆 CORNER MASTER! หมากทอง!', 'default');
+                    setStats(s => ({ ...s, combos: s.combos + 1 }));
+                    playSound('combo');
+                    if (!seenItems.has('disc_gold')) {
+                        setSeenItems(s => new Set([...s, 'disc_gold']));
+                        setTimeout(() => showToast('🥇 หมากทอง: นับ 2 คะแนน!', 'info'), 2000);
+                    }
                 }
 
-                // Check for double turn
+                // Spawn power-up
+                if (gameMode === 'chaos' && Math.random() < 0.12) {
+                    const empty = [];
+                    for (let r = 0; r < 8; r++) {
+                        for (let c = 0; c < 8; c++) {
+                            if (!newBoard[r][c].player && !boardPowerUps[`${r}-${c}`] && !blackHoles.some(h => h.row === r && h.col === c)) {
+                                empty.push({ r, c });
+                            }
+                        }
+                    }
+                    if (empty.length > 0) {
+                        const cell = empty[Math.floor(Math.random() * empty.length)];
+                        const types = Object.keys(POWER_UPS);
+                        setBoardPowerUps(bp => ({ ...bp, [`${cell.r}-${cell.c}`]: types[Math.floor(Math.random() * types.length)] }));
+                    }
+                }
+
+                const newTurn = turnCount + 1;
+                setTurnCount(newTurn);
+
+                // Random event
+                if (gameMode === 'chaos' && newTurn >= nextEventIn) {
+                    triggerEvent(newBoard);
+                    setNextEventIn(newTurn + Math.floor(Math.random() * 4) + 5);
+                }
+
+                // Double turn
                 if (doubleTurnActive && !isAI) {
                     setDoubleTurnActive(false);
-                    // Don't switch turn
+                    const playerMoves = getValidMoves(newBoard, player);
+                    if (playerMoves.length === 0) handleTurnEnd(newBoard, player);
                 } else {
-                    switchTurn();
+                    handleTurnEnd(newBoard, player);
                 }
 
                 playSound('flip');
-            }, [board, currentPlayer, gameState, ghostModeActive, sniperModeActive, powerUps, boardPowerUps, blackHoles, frozenCells, shieldedDiscs, gameMode, turnCount, nextEventIn, doubleTurnActive, scores, getValidMoves]);
+            }, [board, currentPlayer, gameState, ghostModeActive, sniperModeActive, powerUps, boardPowerUps, blackHoles, shieldedDiscs, gameMode, turnCount, nextEventIn, doubleTurnActive, scores, getValidMoves, handleTurnEnd, seenItems]);
 
-            // Switch turn
-            const switchTurn = useCallback(() => {
-                const nextPlayer = currentPlayer === 'black' ? 'white' : 'black';
-                const nextMoves = getValidMoves(board, nextPlayer);
-                
-                if (nextMoves.length === 0) {
-                    const currentMoves = getValidMoves(board, currentPlayer);
-                    if (currentMoves.length === 0) {
-                        // Game over
-                        endGame();
-                    }
-                    // Skip turn
-                    return;
-                }
-
-                setCurrentPlayer(nextPlayer);
-
-                // Decrease frozen cells
-                setFrozenCells(fc => {
-                    const newFc = {};
-                    Object.entries(fc).forEach(([key, turns]) => {
-                        if (turns > 1) newFc[key] = turns - 1;
-                    });
-                    return newFc;
-                });
-
-                // Decrease shield
-                setShieldedDiscs(sd => sd.filter(s => s.turns > 1).map(s => ({ ...s, turns: s.turns - 1 })));
-            }, [currentPlayer, board, getValidMoves]);
-
-            // Update scores
-            function updateScores(newBoard) {
-                let black = 0, white = 0;
-                for (let r = 0; r < BOARD_SIZE; r++) {
-                    for (let c = 0; c < BOARD_SIZE; c++) {
-                        const cell = newBoard[r][c];
-                        if (cell.player === 'black') {
-                            black += cell.type === DISC_TYPES.GOLD ? 2 : 1;
-                        } else if (cell.player === 'white') {
-                            white += cell.type === DISC_TYPES.GOLD ? 2 : 1;
-                        }
-                    }
-                }
-                setScores({ black, white });
-            }
-
-            // Check combos
-            function checkCombos(flipsCount, row, col, newBoard, player) {
-                // Triple Flip
-                if (flipsCount >= 8) {
-                    setCombo({ name: 'TRIPLE FLIP!', desc: '+1 Power-Up สุ่ม' });
-                    if (powerUps.length < 3) {
-                        const powerUpTypes = Object.keys(POWER_UPS);
-                        setPowerUps(p => [...p, powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)]]);
-                    }
-                    setStats(s => ({ ...s, combos: s.combos + 1 }));
-                    playSound('combo');
-                }
-
-                // Corner Master
-                if ((row === 0 || row === 7) && (col === 0 || col === 7)) {
-                    newBoard[row][col].type = DISC_TYPES.GOLD;
-                    setCombo({ name: 'CORNER MASTER!', desc: 'หมากมุมเป็นทอง!' });
-                    setStats(s => ({ ...s, combos: s.combos + 1 }));
-                    playSound('combo');
-                }
-            }
-
-            // Spawn power-up on board
-            function spawnPowerUp() {
-                const emptyCells = [];
-                for (let r = 0; r < BOARD_SIZE; r++) {
-                    for (let c = 0; c < BOARD_SIZE; c++) {
-                        if (!board[r][c].player && !boardPowerUps[`${r}-${c}`] && !blackHoles.some(bh => bh.row === r && bh.col === c)) {
-                            emptyCells.push({ r, c });
-                        }
-                    }
-                }
-                if (emptyCells.length > 0) {
-                    const cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                    const powerUpTypes = Object.keys(POWER_UPS);
-                    setBoardPowerUps(bp => ({
-                        ...bp,
-                        [`${cell.r}-${cell.c}`]: powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)]
-                    }));
-                }
-            }
-
-            // Trigger random event
-            function triggerRandomEvent() {
-                const eventTypes = Object.keys(EVENTS);
-                const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
-                setCurrentEvent(eventType);
+            function triggerEvent(brd) {
+                const types = Object.keys(EVENTS);
+                const type = types[Math.floor(Math.random() * types.length)];
+                setCurrentEvent(type);
                 playSound('event');
 
                 setTimeout(() => {
-                    applyEvent(eventType);
+                    applyEvent(type, brd);
                     setCurrentEvent(null);
                     setStats(s => ({ ...s, eventsLived: s.eventsLived + 1 }));
                 }, 2500);
             }
 
-            // Apply event effect
-            function applyEvent(eventType) {
+            function applyEvent(type, brd) {
                 setScreenShake(true);
                 setTimeout(() => setScreenShake(false), 500);
 
-                const newBoard = board.map(r => r.map(c => ({ ...c })));
+                const newBoard = brd.map(r => r.map(c => ({ ...c })));
 
-                switch (eventType) {
+                switch (type) {
                     case 'EARTHQUAKE':
-                        // Shift all discs in random direction
                         const dir = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
-                        const tempBoard = Array(BOARD_SIZE).fill(null).map(() => 
-                            Array(BOARD_SIZE).fill(null).map(() => ({ player: null, type: DISC_TYPES.NORMAL }))
-                        );
-                        for (let r = 0; r < BOARD_SIZE; r++) {
-                            for (let c = 0; c < BOARD_SIZE; c++) {
+                        const temp = Array(8).fill(null).map(() => Array(8).fill(null).map(() => ({ player: null, type: 'normal' })));
+                        for (let r = 0; r < 8; r++) {
+                            for (let c = 0; c < 8; c++) {
                                 if (newBoard[r][c].player) {
                                     const nr = Math.max(0, Math.min(7, r + dir[0]));
                                     const nc = Math.max(0, Math.min(7, c + dir[1]));
-                                    if (!tempBoard[nr][nc].player) {
-                                        tempBoard[nr][nc] = { ...newBoard[r][c] };
-                                    }
+                                    if (!temp[nr][nc].player) temp[nr][nc] = { ...newBoard[r][c] };
+                                    else temp[r][c] = { ...newBoard[r][c] };
                                 }
                             }
                         }
-                        setBoard(tempBoard);
-                        updateScores(tempBoard);
+                        setBoard(temp);
+                        updateScores(temp);
                         break;
 
                     case 'BLACKHOLE':
-                        // Create 4 black holes
                         const holes = [];
-                        while (holes.length < 4) {
-                            const r = Math.floor(Math.random() * BOARD_SIZE);
-                            const c = Math.floor(Math.random() * BOARD_SIZE);
+                        let att = 0;
+                        while (holes.length < 4 && att < 50) {
+                            const r = Math.floor(Math.random() * 8);
+                            const c = Math.floor(Math.random() * 8);
                             if (!holes.some(h => h.row === r && h.col === c) && !newBoard[r][c].player) {
                                 holes.push({ row: r, col: c });
                             }
+                            att++;
                         }
                         setBlackHoles(h => [...h, ...holes]);
                         break;
 
                     case 'RAINBOW':
-                        // Turn 5 random discs to gold
                         const discs = [];
-                        for (let r = 0; r < BOARD_SIZE; r++) {
-                            for (let c = 0; c < BOARD_SIZE; c++) {
-                                if (newBoard[r][c].player && newBoard[r][c].type === DISC_TYPES.NORMAL) {
+                        for (let r = 0; r < 8; r++) {
+                            for (let c = 0; c < 8; c++) {
+                                if (newBoard[r][c].player && newBoard[r][c].type === 'normal') {
                                     discs.push({ r, c });
                                 }
                             }
                         }
                         for (let i = 0; i < Math.min(5, discs.length); i++) {
                             const idx = Math.floor(Math.random() * discs.length);
-                            const disc = discs.splice(idx, 1)[0];
-                            newBoard[disc.r][disc.c].type = DISC_TYPES.GOLD;
+                            const d = discs.splice(idx, 1)[0];
+                            newBoard[d.r][d.c].type = 'gold';
                         }
                         setBoard(newBoard);
                         updateScores(newBoard);
                         break;
 
                     case 'TIMEWARP':
-                        // Go back 3 turns
                         if (gameHistory.length >= 3) {
-                            const pastState = gameHistory[gameHistory.length - 3];
-                            setBoard(pastState.board);
-                            setScores(pastState.scores);
+                            const past = gameHistory[gameHistory.length - 3];
+                            setBoard(past.board);
+                            setScores(past.scores);
                             setGameHistory(h => h.slice(0, -3));
                         }
                         break;
 
                     case 'MIRROR':
-                        // Mirror board horizontally
-                        for (let r = 0; r < BOARD_SIZE; r++) {
-                            for (let c = 0; c < BOARD_SIZE / 2; c++) {
-                                const temp = newBoard[r][c];
-                                newBoard[r][c] = newBoard[r][BOARD_SIZE - 1 - c];
-                                newBoard[r][BOARD_SIZE - 1 - c] = temp;
+                        for (let r = 0; r < 8; r++) {
+                            for (let c = 0; c < 4; c++) {
+                                const t = newBoard[r][c];
+                                newBoard[r][c] = newBoard[r][7 - c];
+                                newBoard[r][7 - c] = t;
                             }
                         }
                         setBoard(newBoard);
                         break;
 
                     case 'CHAOS':
-                        // Swap 6 random disc positions
-                        const allDiscs = [];
-                        for (let r = 0; r < BOARD_SIZE; r++) {
-                            for (let c = 0; c < BOARD_SIZE; c++) {
-                                if (newBoard[r][c].player) {
-                                    allDiscs.push({ r, c, disc: { ...newBoard[r][c] } });
-                                }
+                        const all = [];
+                        for (let r = 0; r < 8; r++) {
+                            for (let c = 0; c < 8; c++) {
+                                if (newBoard[r][c].player) all.push({ r, c });
                             }
                         }
-                        for (let i = 0; i < Math.min(6, allDiscs.length); i += 2) {
-                            if (i + 1 < allDiscs.length) {
-                                const a = allDiscs[Math.floor(Math.random() * allDiscs.length)];
-                                const b = allDiscs[Math.floor(Math.random() * allDiscs.length)];
-                                if (a !== b) {
-                                    const temp = newBoard[a.r][a.c];
-                                    newBoard[a.r][a.c] = newBoard[b.r][b.c];
-                                    newBoard[b.r][b.c] = temp;
-                                }
+                        for (let i = 0; i < Math.min(3, Math.floor(all.length / 2)); i++) {
+                            if (all.length >= 2) {
+                                const aIdx = Math.floor(Math.random() * all.length);
+                                const a = all.splice(aIdx, 1)[0];
+                                const bIdx = Math.floor(Math.random() * all.length);
+                                const b = all.splice(bIdx, 1)[0];
+                                const t = { ...newBoard[a.r][a.c] };
+                                newBoard[a.r][a.c] = { ...newBoard[b.r][b.c] };
+                                newBoard[b.r][b.c] = t;
                             }
                         }
                         setBoard(newBoard);
@@ -1051,72 +880,58 @@
                 }
             }
 
-            // Use power-up
             function usePowerUp(type) {
                 if (currentPlayer === 'white' || isAIThinking) return;
 
                 switch (type) {
-                    case 'BOMB':
-                        // Will apply on next click
-                        setSelectedPowerUp('BOMB');
-                        break;
-
+                    case 'BOMB': setSelectedPowerUp('BOMB'); break;
                     case 'SWAP':
-                        const newBoard = board.map(r => r.map(c => ({
+                        const nb = board.map(r => r.map(c => ({
                             ...c,
                             player: c.player === 'black' ? 'white' : c.player === 'white' ? 'black' : null
                         })));
-                        setBoard(newBoard);
-                        updateScores(newBoard);
-                        setPowerUps(p => p.filter((_, i) => i !== p.indexOf(type)));
+                        setBoard(nb);
+                        updateScores(nb);
+                        setPowerUps(p => { const i = p.indexOf(type); return p.filter((_, j) => j !== i); });
                         playSound('powerup');
                         setStats(s => ({ ...s, powerUpsUsed: s.powerUpsUsed + 1 }));
                         break;
-
-                    case 'SHIELD':
-                        setSelectedPowerUp('SHIELD');
-                        break;
-
+                    case 'SHIELD': setSelectedPowerUp('SHIELD'); break;
                     case 'DOUBLE':
                         setDoubleTurnActive(true);
-                        setPowerUps(p => p.filter((_, i) => i !== p.indexOf(type)));
+                        setPowerUps(p => { const i = p.indexOf(type); return p.filter((_, j) => j !== i); });
                         playSound('powerup');
                         setStats(s => ({ ...s, powerUpsUsed: s.powerUpsUsed + 1 }));
                         break;
-
                     case 'GHOST':
                         setGhostModeActive(true);
-                        setPowerUps(p => p.filter((_, i) => i !== p.indexOf(type)));
+                        setPowerUps(p => { const i = p.indexOf(type); return p.filter((_, j) => j !== i); });
                         playSound('powerup');
                         setStats(s => ({ ...s, powerUpsUsed: s.powerUpsUsed + 1 }));
                         break;
-
                     case 'SNIPER':
                         setSniperModeActive(true);
-                        setPowerUps(p => p.filter((_, i) => i !== p.indexOf(type)));
+                        setPowerUps(p => { const i = p.indexOf(type); return p.filter((_, j) => j !== i); });
                         setStats(s => ({ ...s, powerUpsUsed: s.powerUpsUsed + 1 }));
                         break;
                 }
             }
 
-            // Handle cell click with power-up
             const handleCellClick = (row, col) => {
                 if (selectedPowerUp === 'BOMB') {
-                    // Bomb effect - clear 3x3 area
-                    const newBoard = board.map(r => r.map(c => ({ ...c })));
+                    const nb = board.map(r => r.map(c => ({ ...c })));
                     for (let dr = -1; dr <= 1; dr++) {
                         for (let dc = -1; dc <= 1; dc++) {
-                            const nr = row + dr;
-                            const nc = col + dc;
-                            if (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE) {
-                                newBoard[nr][nc] = { player: null, type: DISC_TYPES.NORMAL };
+                            const nr = row + dr, nc = col + dc;
+                            if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+                                nb[nr][nc] = { player: null, type: 'normal' };
                             }
                         }
                     }
-                    setBoard(newBoard);
-                    updateScores(newBoard);
+                    setBoard(nb);
+                    updateScores(nb);
                     setSelectedPowerUp(null);
-                    setPowerUps(p => p.filter((_, i) => i !== p.indexOf('BOMB')));
+                    setPowerUps(p => { const i = p.indexOf('BOMB'); return p.filter((_, j) => j !== i); });
                     playSound('powerup');
                     setScreenShake(true);
                     setTimeout(() => setScreenShake(false), 500);
@@ -1128,7 +943,7 @@
                     if (board[row][col].player === 'black') {
                         setShieldedDiscs(sd => [...sd, { row, col, turns: 3 }]);
                         setSelectedPowerUp(null);
-                        setPowerUps(p => p.filter((_, i) => i !== p.indexOf('SHIELD')));
+                        setPowerUps(p => { const i = p.indexOf('SHIELD'); return p.filter((_, j) => j !== i); });
                         playSound('powerup');
                         setStats(s => ({ ...s, powerUpsUsed: s.powerUpsUsed + 1 }));
                     }
@@ -1138,185 +953,141 @@
                 makeMove(row, col);
             };
 
-            // AI Move
+            // AI
             useEffect(() => {
-                if (currentPlayer === 'white' && gameState === 'playing' && !isAIThinking) {
+                if (currentPlayer === 'white' && gameState === 'playing' && !isAIThinking && !passNotification && !currentEvent) {
                     setIsAIThinking(true);
-                    
-                    const thinkTime = difficulty === 'hard' ? 1500 : difficulty === 'medium' ? 800 : 400;
-                    
+                    const time = difficulty === 'hard' ? 1200 : difficulty === 'medium' ? 700 : 400;
+
                     setTimeout(() => {
                         const moves = getValidMoves(board, 'white');
                         if (moves.length === 0) {
-                            switchTurn();
+                            const playerMoves = getValidMoves(board, 'black');
+                            if (playerMoves.length === 0) {
+                                endGame(board);
+                            } else {
+                                setPassNotification({ player: 'AI' });
+                                playSound('pass');
+                                setTimeout(() => {
+                                    setPassNotification(null);
+                                    setCurrentPlayer('black');
+                                }, 1500);
+                            }
                             setIsAIThinking(false);
                             return;
                         }
 
-                        let selectedMove;
-                        
+                        let move;
                         if (difficulty === 'easy') {
-                            // Random move
-                            selectedMove = moves[Math.floor(Math.random() * moves.length)];
+                            move = moves[Math.floor(Math.random() * moves.length)];
                         } else if (difficulty === 'medium') {
-                            // Greedy - most flips + corner priority
-                            selectedMove = moves.reduce((best, move) => {
-                                let score = move.flips.length;
-                                // Corner bonus
-                                if ((move.row === 0 || move.row === 7) && (move.col === 0 || move.col === 7)) {
-                                    score += 10;
-                                }
-                                // Edge bonus
-                                if (move.row === 0 || move.row === 7 || move.col === 0 || move.col === 7) {
-                                    score += 2;
-                                }
-                                return score > (best.score || 0) ? { ...move, score } : best;
+                            move = moves.reduce((best, m) => {
+                                let sc = m.flips.length;
+                                if ((m.row === 0 || m.row === 7) && (m.col === 0 || m.col === 7)) sc += 10;
+                                if (m.row === 0 || m.row === 7 || m.col === 0 || m.col === 7) sc += 2;
+                                return sc > (best.score || 0) ? { ...m, score: sc } : best;
                             }, moves[0]);
                         } else {
-                            // Hard - Minimax with alpha-beta pruning
-                            selectedMove = minimaxMove(board, 4, 'white');
+                            move = minimaxMove(board, 4);
                         }
 
-                        makeMove(selectedMove.row, selectedMove.col, true);
+                        if (move) makeMove(move.row, move.col, true);
                         setIsAIThinking(false);
-                    }, thinkTime);
+                    }, time);
                 }
-            }, [currentPlayer, gameState, board, difficulty, isAIThinking]);
+            }, [currentPlayer, gameState, board, difficulty, isAIThinking, passNotification, currentEvent, getValidMoves, makeMove]);
 
-            // Minimax algorithm
-            function minimaxMove(board, depth, player) {
-                const moves = getValidMoves(board, player);
+            function minimaxMove(brd, depth) {
+                const moves = getValidMoves(brd, 'white');
                 if (moves.length === 0) return null;
-
-                let bestMove = moves[0];
-                let bestScore = -Infinity;
-
-                for (const move of moves) {
-                    const newBoard = applyMove(board, move, player);
-                    const score = minimax(newBoard, depth - 1, -Infinity, Infinity, false, player);
-                    
-                    // Corner bonus
-                    if ((move.row === 0 || move.row === 7) && (move.col === 0 || move.col === 7)) {
-                        score + 50;
-                    }
-
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMove = move;
-                    }
+                let best = moves[0], bestScore = -Infinity;
+                for (const m of moves) {
+                    const nb = applyMv(brd, m, 'white');
+                    let sc = minimax(nb, depth - 1, -Infinity, Infinity, false);
+                    if ((m.row === 0 || m.row === 7) && (m.col === 0 || m.col === 7)) sc += 50;
+                    if (sc > bestScore) { bestScore = sc; best = m; }
                 }
-
-                return bestMove;
+                return best;
             }
 
-            function minimax(board, depth, alpha, beta, isMaximizing, aiPlayer) {
-                if (depth === 0) {
-                    return evaluateBoard(board, aiPlayer);
-                }
+            function minimax(brd, depth, alpha, beta, isMax) {
+                if (depth === 0) return evalBoard(brd);
+                const player = isMax ? 'white' : 'black';
+                const moves = getValidMoves(brd, player);
+                if (moves.length === 0) return evalBoard(brd);
 
-                const player = isMaximizing ? aiPlayer : (aiPlayer === 'white' ? 'black' : 'white');
-                const moves = getValidMoves(board, player);
-
-                if (moves.length === 0) {
-                    return evaluateBoard(board, aiPlayer);
-                }
-
-                if (isMaximizing) {
-                    let maxScore = -Infinity;
-                    for (const move of moves) {
-                        const newBoard = applyMove(board, move, player);
-                        const score = minimax(newBoard, depth - 1, alpha, beta, false, aiPlayer);
-                        maxScore = Math.max(maxScore, score);
-                        alpha = Math.max(alpha, score);
+                if (isMax) {
+                    let max = -Infinity;
+                    for (const m of moves) {
+                        const nb = applyMv(brd, m, player);
+                        max = Math.max(max, minimax(nb, depth - 1, alpha, beta, false));
+                        alpha = Math.max(alpha, max);
                         if (beta <= alpha) break;
                     }
-                    return maxScore;
+                    return max;
                 } else {
-                    let minScore = Infinity;
-                    for (const move of moves) {
-                        const newBoard = applyMove(board, move, player);
-                        const score = minimax(newBoard, depth - 1, alpha, beta, true, aiPlayer);
-                        minScore = Math.min(minScore, score);
-                        beta = Math.min(beta, score);
+                    let min = Infinity;
+                    for (const m of moves) {
+                        const nb = applyMv(brd, m, player);
+                        min = Math.min(min, minimax(nb, depth - 1, alpha, beta, true));
+                        beta = Math.min(beta, min);
                         if (beta <= alpha) break;
                     }
-                    return minScore;
+                    return min;
                 }
             }
 
-            function applyMove(board, move, player) {
-                const newBoard = board.map(r => r.map(c => ({ ...c })));
-                newBoard[move.row][move.col] = { player, type: DISC_TYPES.NORMAL };
-                move.flips.forEach(flip => {
-                    newBoard[flip.row][flip.col].player = player;
-                });
-                return newBoard;
+            function applyMv(brd, move, player) {
+                const nb = brd.map(r => r.map(c => ({ ...c })));
+                nb[move.row][move.col] = { player, type: 'normal' };
+                move.flips.forEach(f => { nb[f.row][f.col].player = player; });
+                return nb;
             }
 
-            function evaluateBoard(board, aiPlayer) {
-                let score = 0;
-                const opponent = aiPlayer === 'white' ? 'black' : 'white';
-
-                // Positional weights
+            function evalBoard(brd) {
                 const weights = [
-                    [100, -20, 10, 5, 5, 10, -20, 100],
-                    [-20, -50, -2, -2, -2, -2, -50, -20],
-                    [10, -2, 1, 1, 1, 1, -2, 10],
-                    [5, -2, 1, 0, 0, 1, -2, 5],
-                    [5, -2, 1, 0, 0, 1, -2, 5],
-                    [10, -2, 1, 1, 1, 1, -2, 10],
-                    [-20, -50, -2, -2, -2, -2, -50, -20],
-                    [100, -20, 10, 5, 5, 10, -20, 100]
+                    [100,-20,10,5,5,10,-20,100],
+                    [-20,-50,-2,-2,-2,-2,-50,-20],
+                    [10,-2,1,1,1,1,-2,10],
+                    [5,-2,1,0,0,1,-2,5],
+                    [5,-2,1,0,0,1,-2,5],
+                    [10,-2,1,1,1,1,-2,10],
+                    [-20,-50,-2,-2,-2,-2,-50,-20],
+                    [100,-20,10,5,5,10,-20,100]
                 ];
-
-                for (let r = 0; r < BOARD_SIZE; r++) {
-                    for (let c = 0; c < BOARD_SIZE; c++) {
-                        if (board[r][c].player === aiPlayer) {
-                            score += weights[r][c];
-                            if (board[r][c].type === DISC_TYPES.GOLD) score += 5;
-                        } else if (board[r][c].player === opponent) {
-                            score -= weights[r][c];
-                        }
+                let sc = 0;
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        if (brd[r][c].player === 'white') sc += weights[r][c];
+                        else if (brd[r][c].player === 'black') sc -= weights[r][c];
                     }
                 }
-
-                return score;
+                return sc;
             }
 
-            // End game
-            function endGame() {
+            function endGame(brd) {
+                const sc = { black: 0, white: 0 };
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const cell = brd[r][c];
+                        if (cell.player === 'black') sc.black += cell.type === 'gold' ? 2 : 1;
+                        else if (cell.player === 'white') sc.white += cell.type === 'gold' ? 2 : 1;
+                    }
+                }
                 setGameState('ended');
-                const winner = scores.black > scores.white ? 'player' : scores.white > scores.black ? 'ai' : 'draw';
-                setResult({
-                    winner,
-                    scores: { ...scores },
-                    stats: { ...stats }
-                });
+                const winner = sc.black > sc.white ? 'player' : sc.white > sc.black ? 'ai' : 'draw';
+                setResult({ winner, scores: sc, stats: { ...stats } });
                 playSound(winner === 'player' ? 'victory' : 'defeat');
             }
 
-            // Check for game end
-            useEffect(() => {
-                if (gameState !== 'playing') return;
-                
-                const blackMoves = getValidMoves(board, 'black');
-                const whiteMoves = getValidMoves(board, 'white');
-                
-                if (blackMoves.length === 0 && whiteMoves.length === 0) {
-                    endGame();
-                }
-            }, [board, gameState]);
-
-            // Start game
             function startGame() {
-                setBoard(initializeBoard());
+                setBoard(initBoard());
                 setCurrentPlayer('black');
                 setGameState('playing');
                 setScores({ black: 2, white: 2 });
                 setPowerUps(gameMode === 'strategy' ? ['BOMB', 'SHIELD', 'DOUBLE'] : []);
                 setBoardPowerUps({});
                 setBlackHoles([]);
-                setFrozenCells({});
                 setShieldedDiscs([]);
                 setTurnCount(0);
                 setNextEventIn(Math.floor(Math.random() * 4) + 5);
@@ -1327,81 +1098,64 @@
                 setGhostModeActive(false);
                 setSniperModeActive(false);
                 setSelectedPowerUp(null);
+                setPassNotification(null);
+                setCurrentEvent(null);
+                setIsAIThinking(false);
             }
 
-            // Get valid moves for display
-            const validMoves = currentPlayer === 'black' ? getValidMoves(board, 'black', ghostModeActive) : [];
+            const validMoves = currentPlayer === 'black' && !isAIThinking ? getValidMoves(board, 'black', ghostModeActive) : [];
 
-            // Render
             return (
-                <div className={`min-h-screen p-4 ${screenShake ? 'screen-shake' : ''}`}>
-                    {/* Header */}
-                    <header className="text-center mb-6">
-                        <h1 className="font-orbitron text-4xl md:text-5xl font-black text-cyan-400 neon-text tracking-wider">
+                <div className={`min-h-screen min-h-[100dvh] p-2 flex flex-col ${screenShake ? 'screen-shake' : ''}`}>
+                    <header className="text-center mb-2">
+                        <h1 className="font-orbitron text-xl sm:text-3xl font-black text-cyan-400 neon-text tracking-wider">
                             OTHELLO TWIST
                         </h1>
-                        <p className="text-gray-400 mt-2 text-sm">เกมที่ไม่เหมือนใคร</p>
                     </header>
 
                     {gameState === 'menu' ? (
-                        /* Menu Screen */
-                        <div className="max-w-md mx-auto text-center">
-                            <div className="bg-black/50 backdrop-blur-md rounded-2xl p-8 border border-cyan-500/30">
-                                <h2 className="font-orbitron text-2xl text-white mb-6">เลือกโหมด</h2>
-                                
-                                <div className="grid grid-cols-2 gap-3 mb-6">
-                                    {['classic', 'chaos', 'strategy', 'speedrun'].map(mode => (
-                                        <button
-                                            key={mode}
-                                            onClick={() => setGameMode(mode)}
-                                            className={`btn-mode ${gameMode === mode ? 'active' : ''}`}
-                                        >
-                                            {mode === 'classic' && '🎯 Classic'}
-                                            {mode === 'chaos' && '🌪️ Chaos'}
-                                            {mode === 'strategy' && '🧠 Strategy'}
-                                            {mode === 'speedrun' && '⚡ Speedrun'}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                <h2 className="font-orbitron text-2xl text-white mb-4">ความยาก</h2>
-                                
-                                <div className="flex justify-center gap-3 mb-8">
-                                    {['easy', 'medium', 'hard'].map(diff => (
-                                        <button
-                                            key={diff}
-                                            onClick={() => setDifficulty(diff)}
-                                            className={`btn-mode ${difficulty === diff ? 'active' : ''}`}
-                                        >
-                                            {diff === 'easy' && '😊 ง่าย'}
-                                            {diff === 'medium' && '😐 ปานกลาง'}
-                                            {diff === 'hard' && '😈 ยาก'}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                <button onClick={startGame} className="btn-neon w-full">
-                                    🎮 เริ่มเกม
-                                </button>
-
-                                <div className="mt-6 text-left text-gray-400 text-sm">
-                                    <p className="mb-2"><strong className="text-cyan-400">Classic:</strong> Othello ดั้งเดิม</p>
-                                    <p className="mb-2"><strong className="text-cyan-400">Chaos:</strong> มี Power-Up + Random Event</p>
-                                    <p className="mb-2"><strong className="text-cyan-400">Strategy:</strong> เลือก Power-Up เริ่มต้น 3 ชิ้น</p>
-                                    <p><strong className="text-cyan-400">Speedrun:</strong> Power-Up เยอะขึ้น!</p>
+                        <div className="flex-1 flex items-center justify-center">
+                            <div className="w-full max-w-xs mx-auto">
+                                <div className="bg-black/50 backdrop-blur-md rounded-2xl p-5 border border-cyan-500/30">
+                                    <h2 className="font-orbitron text-lg text-white mb-3">เลือกโหมด</h2>
+                                    <div className="grid grid-cols-2 gap-2 mb-4">
+                                        {['classic', 'chaos', 'strategy', 'speedrun'].map(mode => (
+                                            <button key={mode} onClick={() => setGameMode(mode)} className={`btn-mode ${gameMode === mode ? 'active' : ''}`}>
+                                                {mode === 'classic' && '🎯 Classic'}
+                                                {mode === 'chaos' && '🌪️ Chaos'}
+                                                {mode === 'strategy' && '🧠 Strategy'}
+                                                {mode === 'speedrun' && '⚡ Speed'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <h2 className="font-orbitron text-lg text-white mb-3">ความยาก</h2>
+                                    <div className="flex justify-center gap-2 mb-5">
+                                        {['easy', 'medium', 'hard'].map(diff => (
+                                            <button key={diff} onClick={() => setDifficulty(diff)} className={`btn-mode ${difficulty === diff ? 'active' : ''}`}>
+                                                {diff === 'easy' && '😊 ง่าย'}
+                                                {diff === 'medium' && '😐 กลาง'}
+                                                {diff === 'hard' && '😈 ยาก'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button onClick={startGame} className="btn-neon w-full mb-3">🎮 เริ่มเกม</button>
+                                    <div className="text-left text-gray-400 text-xs space-y-1">
+                                        <p><strong className="text-cyan-400">Classic:</strong> Othello ดั้งเดิม</p>
+                                        <p><strong className="text-cyan-400">Chaos:</strong> Power-Up + Random Event</p>
+                                        <p><strong className="text-cyan-400">Strategy:</strong> เริ่มมี Power-Up 3 ชิ้น</p>
+                                        <p><strong className="text-cyan-400">Speed:</strong> Power-Up เยอะ!</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        /* Game Screen */
-                        <div className="max-w-4xl mx-auto">
-                            {/* Score and Status */}
-                            <div className="flex justify-between items-center mb-4 px-2">
+                        <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
+                            <div className="flex justify-between items-center mb-2">
                                 <div className="score-card">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-black shadow-lg"></div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-gray-700 to-black"></div>
                                         <div>
-                                            <div className="text-xs text-gray-400">คุณ</div>
+                                            <div className="text-[9px] text-gray-400">คุณ</div>
                                             <div className="score-value text-cyan-400">{scores.black}</div>
                                         </div>
                                     </div>
@@ -1410,105 +1164,72 @@
                                 <div className={`turn-indicator ${currentPlayer === 'black' ? 'player-turn' : 'ai-turn'}`}>
                                     {isAIThinking ? (
                                         <div className="flex items-center gap-2">
-                                            <span className="text-white">AI กำลังคิด</span>
-                                            <div className="ai-thinking">
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                            </div>
+                                            <span className="text-white text-xs">AI</span>
+                                            <div className="ai-thinking"><span></span><span></span><span></span></div>
                                         </div>
                                     ) : (
-                                        <span className="text-white font-medium">
-                                            {currentPlayer === 'black' ? '🎮 ตาของคุณ' : '🤖 ตา AI'}
+                                        <span className="text-white font-medium text-xs">
+                                            {currentPlayer === 'black' ? '🎮 ตาคุณ' : '🤖 AI'}
                                         </span>
                                     )}
                                 </div>
 
                                 <div className="score-card">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-2">
                                         <div>
-                                            <div className="text-xs text-gray-400">AI</div>
+                                            <div className="text-[9px] text-gray-400">AI</div>
                                             <div className="score-value text-pink-400">{scores.white}</div>
                                         </div>
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-white to-gray-300 shadow-lg"></div>
+                                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-white to-gray-300"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Game info */}
                             {gameMode === 'chaos' && (
-                                <div className="text-center mb-3">
-                                    <span className="text-yellow-400 text-sm">
-                                        ⚠️ Event ถัดไปใน {nextEventIn - turnCount} ตา
-                                    </span>
+                                <div className="text-center mb-1">
+                                    <span className="text-yellow-400 text-xs">⚠️ Event ใน {Math.max(0, nextEventIn - turnCount)} ตา</span>
                                 </div>
                             )}
 
-                            {/* Active modes */}
-                            <div className="flex justify-center gap-2 mb-3">
-                                {doubleTurnActive && (
-                                    <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm">
-                                        ⚡ Double Turn Active!
-                                    </span>
-                                )}
-                                {ghostModeActive && (
-                                    <span className="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-sm">
-                                        👻 Ghost Mode Active!
-                                    </span>
-                                )}
-                                {sniperModeActive && (
-                                    <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm">
-                                        🎯 Sniper Mode - คลิกหมากศัตรู!
-                                    </span>
-                                )}
-                                {selectedPowerUp && (
-                                    <span className="bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full text-sm">
-                                        {POWER_UPS[selectedPowerUp].icon} {POWER_UPS[selectedPowerUp].name} - คลิกเลือกตำแหน่ง
-                                    </span>
-                                )}
+                            <div className="flex flex-wrap justify-center gap-1 mb-1 min-h-[20px]">
+                                {doubleTurnActive && <span className="bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full text-xs">⚡ Double!</span>}
+                                {ghostModeActive && <span className="bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full text-xs">👻 Ghost!</span>}
+                                {sniperModeActive && <span className="bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full text-xs">🎯 คลิกหมากขาว!</span>}
+                                {selectedPowerUp && <span className="bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full text-xs">{POWER_UPS[selectedPowerUp].icon} คลิกตำแหน่ง</span>}
                             </div>
 
-                            {/* Board */}
-                            <div className="flex justify-center mb-4">
-                                <div ref={boardRef} className="game-board w-full max-w-[400px]">
-                                    {board.map((row, rowIdx) => (
-                                        row.map((cell, colIdx) => {
-                                            const isValidMove = validMoves.some(m => m.row === rowIdx && m.col === colIdx);
-                                            const isBlackHole = blackHoles.some(bh => bh.row === rowIdx && bh.col === colIdx);
-                                            const isFrozen = frozenCells[`${rowIdx}-${colIdx}`];
-                                            const powerUp = boardPowerUps[`${rowIdx}-${colIdx}`];
-                                            const isShielded = shieldedDiscs.some(s => s.row === rowIdx && s.col === colIdx);
+                            <div className="flex justify-center mb-2 px-1">
+                                <div className="game-board w-full max-w-[min(88vw,360px)]">
+                                    {board.map((row, ri) => row.map((cell, ci) => {
+                                        const isValid = validMoves.some(m => m.row === ri && m.col === ci);
+                                        const isHole = blackHoles.some(h => h.row === ri && h.col === ci);
+                                        const pu = boardPowerUps[`${ri}-${ci}`];
+                                        const isShield = shieldedDiscs.some(s => s.row === ri && s.col === ci);
 
-                                            return (
-                                                <div
-                                                    key={`${rowIdx}-${colIdx}`}
-                                                    className={`cell ${cell.player ? 'has-disc' : ''} ${isValidMove ? 'valid-move' : ''} ${isBlackHole ? 'black-hole' : ''} ${isFrozen ? 'frozen' : ''}`}
-                                                    onClick={() => handleCellClick(rowIdx, colIdx)}
-                                                >
-                                                    {cell.player && (
-                                                        <div className={`disc disc-${cell.player} ${cell.type !== DISC_TYPES.NORMAL ? `disc-${cell.type}` : ''} ${isShielded ? 'disc-shielded' : ''}`}>
-                                                        </div>
-                                                    )}
-                                                    {powerUp && !cell.player && (
-                                                        <span className="power-up-cell">{POWER_UPS[powerUp].icon}</span>
-                                                    )}
-                                                </div>
-                                            );
-                                        })
-                                    ))}
+                                        return (
+                                            <div
+                                                key={`${ri}-${ci}`}
+                                                className={`cell ${cell.player ? 'has-disc' : ''} ${isValid ? 'valid-move' : ''} ${isHole ? 'black-hole' : ''}`}
+                                                onClick={() => handleCellClick(ri, ci)}
+                                            >
+                                                {cell.player && (
+                                                    <div className={`disc disc-${cell.player} ${cell.type === 'gold' ? 'disc-gold' : ''} ${isShield ? 'disc-shielded' : ''}`}></div>
+                                                )}
+                                                {pu && !cell.player && <span className="power-up-cell">{POWER_UPS[pu].icon}</span>}
+                                            </div>
+                                        );
+                                    }))}
                                 </div>
                             </div>
 
-                            {/* Power-ups inventory */}
                             {gameMode !== 'classic' && (
-                                <div className="flex justify-center gap-3 mb-4">
-                                    <span className="text-gray-400 self-center mr-2">Power-Ups:</span>
+                                <div className="flex justify-center items-center gap-2 mb-2">
+                                    <span className="text-gray-400 text-xs">Power-Ups:</span>
                                     {[0, 1, 2].map(i => (
                                         <div
                                             key={i}
                                             className={`power-up-slot ${powerUps[i] && selectedPowerUp === powerUps[i] ? 'selected' : ''}`}
                                             onClick={() => powerUps[i] && usePowerUp(powerUps[i])}
-                                            title={powerUps[i] ? POWER_UPS[powerUps[i]].desc : 'ว่าง'}
                                         >
                                             {powerUps[i] ? POWER_UPS[powerUps[i]].icon : ''}
                                         </div>
@@ -1516,76 +1237,96 @@
                                 </div>
                             )}
 
-                            {/* Controls */}
-                            <div className="flex justify-center gap-4">
-                                <button onClick={startGame} className="btn-neon text-sm">
-                                    🔄 เกมใหม่
-                                </button>
-                                <button onClick={() => setGameState('menu')} className="btn-neon text-sm" style={{ borderColor: '#ff00ff', color: '#ff00ff' }}>
-                                    🏠 เมนูหลัก
-                                </button>
+                            <div className="flex justify-center gap-3 mt-auto pb-2">
+                                <button onClick={startGame} className="btn-neon">🔄 ใหม่</button>
+                                <button onClick={() => setGameState('menu')} className="btn-neon" style={{ borderColor: '#ff00ff', color: '#ff00ff' }}>🏠 เมนู</button>
                             </div>
                         </div>
                     )}
 
-                    {/* Event Popup */}
-                    {currentEvent && (
+                    {gameState === 'playing' && gameMode !== 'classic' && (
+                        <button className="help-btn" onClick={() => setShowHelp(true)}>❓</button>
+                    )}
+
+                    {showHelp && (
                         <>
-                            <div className="overlay"></div>
-                            <div className="event-popup">
-                                <div className="event-icon">{EVENTS[currentEvent].icon}</div>
-                                <h2 className="font-orbitron text-3xl text-pink-400 neon-text-magenta mb-4">
-                                    {EVENTS[currentEvent].name}
-                                </h2>
-                                <p className="text-white text-xl">{EVENTS[currentEvent].desc}</p>
+                            <div className="popup-overlay" onClick={() => setShowHelp(false)}></div>
+                            <div className="info-popup" style={{ width: '90%', maxWidth: '380px' }}>
+                                <h2 className="font-orbitron text-lg text-cyan-400 mb-3">📖 คู่มือ</h2>
+                                <div className="text-left mb-3">
+                                    <h3 className="text-yellow-400 font-bold mb-1 text-sm">💫 Power-Ups</h3>
+                                    <div className="space-y-1 text-xs text-gray-300">
+                                        {Object.entries(POWER_UPS).map(([k, v]) => (
+                                            <p key={k}>{v.icon} <strong>{v.name}:</strong> {v.desc}</p>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="text-left mb-3">
+                                    <h3 className="text-pink-400 font-bold mb-1 text-sm">🌀 Random Events</h3>
+                                    <div className="space-y-1 text-xs text-gray-300">
+                                        {Object.entries(EVENTS).map(([k, v]) => (
+                                            <p key={k}>{v.icon} <strong>{v.name}:</strong> {v.desc}</p>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="text-left mb-3">
+                                    <h3 className="text-green-400 font-bold mb-1 text-sm">🎨 หมากพิเศษ</h3>
+                                    <div className="text-xs text-gray-300">
+                                        <p>🥇 <strong>หมากทอง:</strong> นับ 2 คะแนน (ได้จากยึดมุม หรือ Rainbow Event)</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setShowHelp(false)} className="btn-neon text-xs">ปิด</button>
                             </div>
                         </>
                     )}
 
-                    {/* Combo Popup */}
-                    {combo && (
-                        <div 
-                            className="combo-popup"
-                            onAnimationEnd={() => setCombo(null)}
-                        >
-                            🔥 {combo.name} {combo.desc}
+                    {currentEvent && (
+                        <>
+                            <div className="popup-overlay"></div>
+                            <div className="event-popup">
+                                <div className="event-icon">{EVENTS[currentEvent].icon}</div>
+                                <h2 className="font-orbitron text-xl text-pink-400 neon-text-magenta mb-2">{EVENTS[currentEvent].name}</h2>
+                                <p className="text-white text-sm">{EVENTS[currentEvent].desc}</p>
+                            </div>
+                        </>
+                    )}
+
+                    {passNotification && (
+                        <>
+                            <div className="popup-overlay"></div>
+                            <div className="pass-popup">
+                                <div className="text-3xl mb-2">⏭️</div>
+                                <h2 className="font-orbitron text-lg text-yellow-400 mb-1">PASS!</h2>
+                                <p className="text-white text-sm">{passNotification.player} ไม่มีที่วาง - ข้ามตา</p>
+                            </div>
+                        </>
+                    )}
+
+                    {toast && (
+                        <div className={`toast ${toast.type === 'info' ? 'info' : toast.type === 'power' ? 'power' : ''}`}>
+                            {toast.msg}
                         </div>
                     )}
 
-                    {/* Result Screen */}
                     {result && (
                         <>
-                            <div className="overlay"></div>
+                            <div className="popup-overlay"></div>
                             <div className={`result-screen ${result.winner === 'player' ? 'victory' : 'defeat'}`}>
-                                <div className="text-6xl mb-4">
+                                <div className="text-4xl mb-2">
                                     {result.winner === 'player' ? '🎉' : result.winner === 'ai' ? '😢' : '🤝'}
                                 </div>
-                                <h2 className={`font-orbitron text-4xl mb-6 ${result.winner === 'player' ? 'text-cyan-400 neon-text' : 'text-pink-400 neon-text-magenta'}`}>
+                                <h2 className={`font-orbitron text-2xl mb-3 ${result.winner === 'player' ? 'text-cyan-400 neon-text' : 'text-pink-400 neon-text-magenta'}`}>
                                     {result.winner === 'player' ? 'VICTORY!' : result.winner === 'ai' ? 'DEFEAT' : 'DRAW'}
                                 </h2>
-                                
-                                <div className="text-white text-2xl mb-6">
-                                    {result.scores.black} - {result.scores.white}
-                                </div>
-
-                                <div className="text-left bg-black/30 rounded-lg p-4 mb-6">
-                                    <h3 className="text-cyan-400 font-bold mb-2">📊 สถิติ</h3>
-                                    <p className="text-gray-300">Combo ที่ได้: {result.stats.combos}</p>
-                                    <p className="text-gray-300">Power-Up ใช้: {result.stats.powerUpsUsed}</p>
-                                    <p className="text-gray-300">Event รอด: {result.stats.eventsLived}</p>
-                                </div>
-
-                                <div className="flex gap-4 justify-center">
-                                    <button onClick={startGame} className="btn-neon">
-                                        🔄 เล่นอีก
-                                    </button>
-                                    <button 
-                                        onClick={() => { setResult(null); setGameState('menu'); }} 
-                                        className="btn-neon"
-                                        style={{ borderColor: '#ff00ff', color: '#ff00ff' }}
-                                    >
-                                        🏠 เมนูหลัก
-                                    </button>
+                                <div className="text-white text-xl mb-3">{result.scores.black} - {result.scores.white}</div>
+                                {gameMode !== 'classic' && (
+                                    <div className="text-left bg-black/30 rounded-lg p-2 mb-3 text-xs">
+                                        <p className="text-gray-300">Combo: {result.stats.combos} | Power-Up: {result.stats.powerUpsUsed} | Event: {result.stats.eventsLived}</p>
+                                    </div>
+                                )}
+                                <div className="flex gap-2 justify-center">
+                                    <button onClick={startGame} className="btn-neon text-xs">🔄 เล่นอีก</button>
+                                    <button onClick={() => { setResult(null); setGameState('menu'); }} className="btn-neon text-xs" style={{ borderColor: '#ff00ff', color: '#ff00ff' }}>🏠 เมนู</button>
                                 </div>
                             </div>
                         </>
@@ -1594,7 +1335,6 @@
             );
         }
 
-        // Render
         ReactDOM.createRoot(document.getElementById('app')).render(<OthelloTwist />);
     </script>
 </body>
